@@ -2,9 +2,9 @@
 
 namespace Becklyn\Monitoring\DependencyInjection;
 
-use Becklyn\Hosting\Git\GitIntegration;
 use Becklyn\Monitoring\Config\MonitoringConfig;
 use Becklyn\Monitoring\Sentry\CustomSanitizeDataProcessor;
+use Becklyn\Monitoring\DependencyInjection\CompilerPass\ReleaseVersionPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -16,6 +16,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BecklynMonitoringExtension extends Extension implements PrependExtensionInterface
 {
+    /**
+     * @var ReleaseVersionPass
+     */
+    private $releaseVersionPass;
+
+
+    public function __construct (ReleaseVersionPass $releaseVersionPass)
+    {
+        $this->releaseVersionPass = $releaseVersionPass;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -32,6 +44,9 @@ class BecklynMonitoringExtension extends Extension implements PrependExtensionIn
         $config = $this->processConfiguration(new BecklynMonitoringConfiguration(), $configs);
         $container->getDefinition(MonitoringConfig::class)
             ->setArgument('$config', $config);
+
+        // set release version here, as we need the project name
+        $this->releaseVersionPass->setProjectName($config["project_name"]);
     }
 
 
@@ -41,12 +56,9 @@ class BecklynMonitoringExtension extends Extension implements PrependExtensionIn
     public function prepend (ContainerBuilder $container)
     {
         // add sane defaults for the sentry configuration
-        $git = new GitIntegration($container->getParameter('kernel.project_dir'));
-
         $container->prependExtensionConfig('sentry', [
             "options" => [
                 "curl_method" => "async",
-                "release" => $git->fetchHeadCommitHash(),
                 "processors" => [
                     \Raven_Processor_SanitizeDataProcessor::class,
                     CustomSanitizeDataProcessor::class,
