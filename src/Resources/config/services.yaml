@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Becklyn\Monitoring\:
+        resource: '../../*'
+
+    Becklyn\Monitoring\Twig\MonitoringTwigExtension:
+        $environment: '%kernel.environment%'
+        $isDebug: '%kernel.debug%'

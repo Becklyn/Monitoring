@@ -1,0 +1,39 @@
+{
+    "name": "becklyn/monitoring",
+    "type": "symfony-bundle",
+    "description": "Default monitoring bundle for all applications by Becklyn.",
+    "keywords": [
+        "becklyn",
+        "monitoring",
+        "sentry",
+        "trackjs",
+        "uptime"
+    ],
+    "homepage": "https://github.com/Becklyn/Monitoring",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Becklyn Studios",
+            "homepage": "https://becklyn.com/"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-json": "*",
+        "becklyn/assets-bundle": "^2.2",
+        "becklyn/hosting": "^1.0",
+        "sentry/sentry-symfony": "^2.1",
+        "symfony/http-kernel": "^3.4 || ^4.0"
+    },
+    "require-dev": {
+        "twig/twig": "^2.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Becklyn\\Monitoring\\": "src/"
+        }
+    }
+}
