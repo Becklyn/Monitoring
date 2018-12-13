@@ -4,6 +4,7 @@ namespace Becklyn\Monitoring\DependencyInjection;
 
 use Becklyn\Hosting\Git\GitIntegration;
 use Becklyn\Monitoring\Config\MonitoringConfig;
+use Becklyn\Monitoring\Sentry\CustomSanitizeDataProcessor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -46,6 +47,10 @@ class BecklynMonitoringExtension extends Extension implements PrependExtensionIn
             "options" => [
                 "curl_method" => "async",
                 "release" => $git->fetchHeadCommitHash(),
+                "processors" => [
+                    \Raven_Processor_SanitizeDataProcessor::class,
+                    CustomSanitizeDataProcessor::class,
+                ]
             ],
             "skip_capture" => [
                 AccessDeniedHttpException::class,
