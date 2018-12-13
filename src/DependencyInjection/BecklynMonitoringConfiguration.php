@@ -6,7 +6,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 
-class BecklynMonitoringBundleConfiguration implements ConfigurationInterface
+class BecklynMonitoringConfiguration implements ConfigurationInterface
 {
     /**
      * @inheritDoc
@@ -17,6 +17,13 @@ class BecklynMonitoringBundleConfiguration implements ConfigurationInterface
 
         $treeBuilder->root("becklyn_monitoring")
             ->children()
+                ->scalarNode("project_name")
+                    ->isRequired()
+                ->end()
+                ->scalarNode("trackjs")
+                    ->defaultNull()
+                    ->info("The token for the TrackJS integration.")
+                ->end()
             ->end();
 
         return $treeBuilder;
