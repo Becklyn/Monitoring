@@ -2,11 +2,9 @@
 
 namespace Becklyn\Monitoring\Twig;
 
-
-use Becklyn\AssetsBundle\Helper\AssetHelper;
 use Becklyn\Hosting\Config\HostingConfig;
+use Becklyn\Monitoring\Asset\AssetProvider;
 use Becklyn\Monitoring\Config\MonitoringConfig;
-
 
 class MonitoringTwigExtension extends \Twig_Extension
 {
@@ -23,9 +21,9 @@ class MonitoringTwigExtension extends \Twig_Extension
 
 
     /**
-     * @var AssetHelper
+     * @var AssetProvider
      */
-    private $assetHelper;
+    private $assetProvider;
 
 
     /**
@@ -43,21 +41,21 @@ class MonitoringTwigExtension extends \Twig_Extension
     /**
      * @param MonitoringConfig $monitoringConfig
      * @param HostingConfig    $hostingConfig
-     * @param AssetHelper      $assetHelper
+     * @param AssetProvider    $assetProvider
      * @param string           $environment
      * @param string           $isDebug
      */
     public function __construct (
         MonitoringConfig $monitoringConfig,
         HostingConfig $hostingConfig,
-        AssetHelper $assetHelper,
+        AssetProvider $assetProvider,
         string $environment,
         string $isDebug
     )
     {
         $this->monitoringConfig = $monitoringConfig;
         $this->hostingConfig = $hostingConfig;
-        $this->assetHelper = $assetHelper;
+        $this->assetProvider = $assetProvider;
         $this->environment = $environment;
         $this->isDebug = $isDebug;
     }
@@ -78,7 +76,7 @@ class MonitoringTwigExtension extends \Twig_Extension
 
         return \sprintf(
             '<script src="%s"></script><script>window.TrackJS && TrackJS.install(%s)</script>',
-            $this->assetHelper->getUrl("@monitoring/js/trackjs.js"),
+            $this->assetProvider->getUrl("js/trackjs.js"),
             \json_encode([
                 "token" => $trackJsToken,
                 "application" => $this->hostingConfig->getDeploymentTier(),

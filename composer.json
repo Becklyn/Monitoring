@@ -20,13 +20,16 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "becklyn/assets-bundle": "^2.2",
         "becklyn/hosting": "^1.0.2",
         "sentry/sentry-symfony": "^2.1",
         "symfony/http-kernel": "^3.4 || ^4.0"
     },
     "require-dev": {
         "twig/twig": "^2.0"
+    },
+    "suggest": {
+        "becklyn/assets-bundle": "Providing the TrackJS JavaScript asset",
+        "symfony/assets": "Symfony-native fallback for apps that don't use the Becklyn Assets bundle yet to provide the TrackJS JavaScript asset"
     },
     "config": {
         "sort-packages": true
