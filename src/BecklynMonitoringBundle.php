@@ -28,13 +28,17 @@ class BecklynMonitoringBundle extends Bundle
     /**
      * @inheritDoc
      */
-    public function build (ContainerBuilder $container)
+    public function build (ContainerBuilder $container) : void
     {
-        $container->addCompilerPass(
-            new RegisterAssetNamespacesCompilerPass([
-                "monitoring" => __DIR__ . "/../build",
-            ])
-        );
+        if (\class_exists(RegisterAssetNamespacesCompilerPass::class))
+        {
+            $container->addCompilerPass(
+                new RegisterAssetNamespacesCompilerPass([
+                    "monitoring" => __DIR__ . "/../src/Resources/public",
+                ])
+            );
+
+        }
 
         $container->addCompilerPass($this->releaseVersionPass);
     }

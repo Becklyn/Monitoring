@@ -7,5 +7,7 @@ services:
         resource: '../../*'
 
     Becklyn\Monitoring\Twig\MonitoringTwigExtension:
+        $assetHelper: '@?Becklyn\AssetsBundle\Helper\AssetHelper'
+        $packages: '@?Symfony\Component\Asset\Packages'
         $environment: '%kernel.environment%'
         $isDebug: '%kernel.debug%'

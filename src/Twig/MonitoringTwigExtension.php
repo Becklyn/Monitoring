@@ -2,11 +2,10 @@
 
 namespace Becklyn\Monitoring\Twig;
 
-
 use Becklyn\AssetsBundle\Helper\AssetHelper;
 use Becklyn\Hosting\Config\HostingConfig;
 use Becklyn\Monitoring\Config\MonitoringConfig;
-
+use Symfony\Component\Asset\Packages;
 
 class MonitoringTwigExtension extends \Twig_Extension
 {
@@ -15,42 +14,45 @@ class MonitoringTwigExtension extends \Twig_Extension
      */
     private $monitoringConfig;
 
-
     /**
      * @var HostingConfig
      */
     private $hostingConfig;
-
-
-    /**
-     * @var AssetHelper
-     */
-    private $assetHelper;
-
 
     /**
      * @var string
      */
     private $environment;
 
-
     /**
      * @var string
      */
     private $isDebug;
 
+    /**
+     * @var AssetHelper|null
+     */
+    private $assetHelper;
+
+    /**
+     * @var Packages|null
+     */
+    private $packages;
+
 
     /**
      * @param MonitoringConfig $monitoringConfig
      * @param HostingConfig    $hostingConfig
-     * @param AssetHelper      $assetHelper
+     * @param AssetHelper|null $assetHelper
+     * @param Packages|null    $packages
      * @param string           $environment
      * @param string           $isDebug
      */
     public function __construct (
         MonitoringConfig $monitoringConfig,
         HostingConfig $hostingConfig,
-        AssetHelper $assetHelper,
+        ?AssetHelper $assetHelper,
+        ?Packages $packages,
         string $environment,
         string $isDebug
     )
@@ -58,6 +60,7 @@ class MonitoringTwigExtension extends \Twig_Extension
         $this->monitoringConfig = $monitoringConfig;
         $this->hostingConfig = $hostingConfig;
         $this->assetHelper = $assetHelper;
+        $this->packages = $packages;
         $this->environment = $environment;
         $this->isDebug = $isDebug;
     }
@@ -68,6 +71,11 @@ class MonitoringTwigExtension extends \Twig_Extension
      */
     public function embedMonitoring () : string
     {
+        if (null === $this->assetHelper && null === $this->packages)
+        {
+            throw new AssetIntegrationFailedException("No asset integration extension found. Please either install `becklyn/assets-bundle` or `symfony/asset` to use this bundle.");
+        }
+
         $trackJsToken = $this->monitoringConfig->getTrackJsToken();
 
         // only embed if token is set, in production and not in debug
@@ -76,9 +84,13 @@ class MonitoringTwigExtension extends \Twig_Extension
             return "";
         }
 
+        $assetUrl = null !== $this->assetHelper
+            ? $this->assetHelper->getUrl("@monitoring/js/trackjs.js")
+            : $this->packages->getUrl("bundles/becklynmonitoring/js/trackjs.js");
+
         return \sprintf(
             '<script src="%s"></script><script>window.TrackJS && TrackJS.install(%s)</script>',
-            $this->assetHelper->getUrl("@monitoring/js/trackjs.js"),
+            $assetUrl,
             \json_encode([
                 "token" => $trackJsToken,
                 "application" => $this->hostingConfig->getDeploymentTier(),
@@ -93,7 +105,7 @@ class MonitoringTwigExtension extends \Twig_Extension
     /**
      * @inheritdoc
      */
-    public function getFunctions ()
+    public function getFunctions () : iterable
     {
         return [
             new \Twig_Function("monitoring_embed", [$this, "embedMonitoring"], ["is_safe" => ["html"]]),
