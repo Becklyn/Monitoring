@@ -21,7 +21,7 @@
         "php": "^7.1",
         "ext-json": "*",
         "becklyn/assets-bundle": "^2.2",
-        "becklyn/hosting": "^1.0",
+        "becklyn/hosting": "^1.0.2",
         "sentry/sentry-symfony": "^2.1",
         "symfony/http-kernel": "^3.4 || ^4.0"
     },
