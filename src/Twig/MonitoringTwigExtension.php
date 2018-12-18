@@ -71,7 +71,7 @@ class MonitoringTwigExtension extends \Twig_Extension
      */
     public function embedMonitoring () : string
     {
-        if (!\class_exists(AssetHelper::class) && !\class_exists(Packages::class))
+        if (null === $this->assetHelper && null === $this->packages)
         {
             throw new AssetIntegrationFailedException("No asset integration extension found. Please either install `becklyn/assets-bundle` or `symfony/asset` to use this bundle.");
         }
