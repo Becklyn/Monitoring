@@ -2,6 +2,6 @@
 
 namespace Becklyn\Monitoring\Exception;
 
-class AssetIntegrationFailedException extends \LogicException
+class AssetIntegrationFailedException extends \RuntimeException
 {
 }
