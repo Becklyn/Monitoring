@@ -3,6 +3,7 @@
 namespace Becklyn\Monitoring\Twig;
 
 use Becklyn\AssetsBundle\Helper\AssetHelper;
+use Becklyn\AssetsBundle\Namespaces\RegisterAssetNamespacesCompilerPass;
 use Becklyn\Hosting\Config\HostingConfig;
 use Becklyn\Monitoring\Config\MonitoringConfig;
 use Symfony\Component\Asset\Packages;
@@ -71,6 +72,11 @@ class MonitoringTwigExtension extends \Twig_Extension
      */
     public function embedMonitoring () : string
     {
+        if (!\class_exists(AssetHelper::class) && !\class_exists(Packages::class))
+        {
+            throw new AssetIntegrationFailedException("No asset integration extension found. Please either install `becklyn/assets-bundle` or `symfony/asset` to use this bundle.");
+        }
+
         $trackJsToken = $this->monitoringConfig->getTrackJsToken();
 
         // only embed if token is set, in production and not in debug

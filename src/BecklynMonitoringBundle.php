@@ -5,8 +5,6 @@ namespace Becklyn\Monitoring;
 use Becklyn\AssetsBundle\Namespaces\RegisterAssetNamespacesCompilerPass;
 use Becklyn\Monitoring\DependencyInjection\BecklynMonitoringExtension;
 use Becklyn\Monitoring\DependencyInjection\CompilerPass\ReleaseVersionPass;
-use Becklyn\Monitoring\Exception\AssetIntegrationFailedException;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -41,10 +39,6 @@ class BecklynMonitoringBundle extends Bundle
             );
 
             $container->addCompilerPass($this->releaseVersionPass);
-        }
-        else if (!\class_exists(Packages::class))
-        {
-            throw new AssetIntegrationFailedException("No asset integration extension found. Please either install `becklyn/assets-bundle` or `symfony/asset` to use this bundle.");
         }
     }
 
