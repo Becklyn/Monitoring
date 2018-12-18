@@ -36,7 +36,7 @@ class BecklynMonitoringBundle extends Bundle
         {
             $container->addCompilerPass(
                 new RegisterAssetNamespacesCompilerPass([
-                    "monitoring" => __DIR__ . "/../build",
+                    "monitoring" => __DIR__ . "/../src/Resources/public",
                 ])
             );
 
