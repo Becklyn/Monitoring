@@ -79,11 +79,13 @@ class MonitoringTwigExtension extends \Twig_Extension
             return "";
         }
 
+        $assetUrl = null !== $this->assetHelper
+            ? $this->assetHelper->getUrl("@monitoring/js/trackjs.js")
+            : $this->packages->getUrl("bundles/becklynmonitoring/js/trackjs.js");
+
         return \sprintf(
             '<script src="%s"></script><script>window.TrackJS && TrackJS.install(%s)</script>',
-            $assetUrl = null !== $this->assetHelper
-                ? $this->assetHelper->getUrl("@monitoring/js/trackjs.js")
-                : $this->packages->getUrl("bundles/becklynmonitoring/js/trackjs.js"),
+            $assetUrl,
             \json_encode([
                 "token" => $trackJsToken,
                 "application" => $this->hostingConfig->getDeploymentTier(),
