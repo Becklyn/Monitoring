@@ -3,7 +3,6 @@
 namespace Becklyn\Monitoring\Twig;
 
 use Becklyn\AssetsBundle\Helper\AssetHelper;
-use Becklyn\AssetsBundle\Namespaces\RegisterAssetNamespacesCompilerPass;
 use Becklyn\Hosting\Config\HostingConfig;
 use Becklyn\Monitoring\Config\MonitoringConfig;
 use Symfony\Component\Asset\Packages;
