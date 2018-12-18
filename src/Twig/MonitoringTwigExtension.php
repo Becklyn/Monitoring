@@ -2,9 +2,10 @@
 
 namespace Becklyn\Monitoring\Twig;
 
+use Becklyn\AssetsBundle\Helper\AssetHelper;
 use Becklyn\Hosting\Config\HostingConfig;
-use Becklyn\Monitoring\Asset\AssetProvider;
 use Becklyn\Monitoring\Config\MonitoringConfig;
+use Symfony\Component\Asset\Packages;
 
 class MonitoringTwigExtension extends \Twig_Extension
 {
@@ -13,49 +14,53 @@ class MonitoringTwigExtension extends \Twig_Extension
      */
     private $monitoringConfig;
 
-
     /**
      * @var HostingConfig
      */
     private $hostingConfig;
-
-
-    /**
-     * @var AssetProvider
-     */
-    private $assetProvider;
-
 
     /**
      * @var string
      */
     private $environment;
 
-
     /**
      * @var string
      */
     private $isDebug;
 
+    /**
+     * @var AssetHelper|null
+     */
+    private $assetHelper;
+
+    /**
+     * @var Packages|null
+     */
+    private $packages;
+
 
     /**
      * @param MonitoringConfig $monitoringConfig
      * @param HostingConfig    $hostingConfig
-     * @param AssetProvider    $assetProvider
+     * @param AssetHelper|null $assetHelper
+     * @param Packages|null    $packages
      * @param string           $environment
      * @param string           $isDebug
      */
     public function __construct (
         MonitoringConfig $monitoringConfig,
         HostingConfig $hostingConfig,
-        AssetProvider $assetProvider,
+        ?AssetHelper $assetHelper,
+        ?Packages $packages,
         string $environment,
         string $isDebug
     )
     {
         $this->monitoringConfig = $monitoringConfig;
         $this->hostingConfig = $hostingConfig;
-        $this->assetProvider = $assetProvider;
+        $this->assetHelper = $assetHelper;
+        $this->packages = $packages;
         $this->environment = $environment;
         $this->isDebug = $isDebug;
     }
@@ -76,7 +81,9 @@ class MonitoringTwigExtension extends \Twig_Extension
 
         return \sprintf(
             '<script src="%s"></script><script>window.TrackJS && TrackJS.install(%s)</script>',
-            $this->assetProvider->getUrl("js/trackjs.js"),
+            $assetUrl = null !== $this->assetHelper
+                ? $this->assetHelper->getUrl("@monitoring/js/trackjs.js")
+                : $this->packages->getUrl("bundles/becklyn-monitoring/js/trackjs.js"),
             \json_encode([
                 "token" => $trackJsToken,
                 "application" => $this->hostingConfig->getDeploymentTier(),
@@ -91,7 +98,7 @@ class MonitoringTwigExtension extends \Twig_Extension
     /**
      * @inheritdoc
      */
-    public function getFunctions ()
+    public function getFunctions () : iterable
     {
         return [
             new \Twig_Function("monitoring_embed", [$this, "embedMonitoring"], ["is_safe" => ["html"]]),
