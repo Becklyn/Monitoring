@@ -38,8 +38,9 @@ class BecklynMonitoringBundle extends Bundle
                 ])
             );
 
-            $container->addCompilerPass($this->releaseVersionPass);
         }
+
+        $container->addCompilerPass($this->releaseVersionPass);
     }
 
 
